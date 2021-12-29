@@ -1,10 +1,12 @@
 import {useState, useEffect} from "react";
 import React from 'react';
-import {getAll, annonceResponse, deleteAnnonce} from "../services/annonceService";
-import {Card, Button, Row} from 'react-bootstrap';
-
+import {getAll, annonceResponse, deleteAnnonce, getAnnonceByNameAndType} from "../services/annonceService";
+import { Image, Form, Input, Col, Row, Button} from "antd";
+import { useHistory } from "react-router-dom";
 
 const AnnoncesList = () => {
+    const [form] = Form.useForm()
+    const history = useHistory()
     const [annonces, setAnnonce] = useState([]);
     const fetchAnnonce = () => {
         getAll().then(response => {
@@ -14,18 +16,51 @@ const AnnoncesList = () => {
     useEffect(() => {
         fetchAnnonce()
     }, [])
-
+    const onFinish = (values : any) => {
+        
+            getAnnonceByNameAndType(values.name?values.name:"",values.type?values.type:"").then(response => {
+                setAnnonce(response.data)
+            });
+        
+    };
     return (
         <>
             <div className="header">
-                <Button className="button-add">Add</Button>
+            <Form layout="vertical"
+                    form={form}
+                    onFinish={onFinish}
+                    autoComplete="true">
+                    <Row gutter={8}>
+                        <Col xs={7}
+                            sm={7}
+                            lg={7}>
+                            <Form.Item label="Name" name="name">
+                                <Input/>
+                            </Form.Item>
+                        </Col>
+                        <Col xs={7}
+                            sm={7}
+                            lg={7}>
+                            <Form.Item label="Type" name="type">
+                                <Input/>
+                            </Form.Item>
+                        </Col>
+                        <Col xs={10}
+                            sm={10}
+                            lg={10}>
+                        <Button className="button-add" htmlType="submit">search</Button>
+                        <Button className="button-add" onClick={()=>history.push(`/createOrUpdate/create`)}>Add</Button>
+
+                        </Col>
+                    </Row>
+                    </Form>
             </div>
             <div>
                 <div className="cards">
                     {
                     annonces.map((e : annonceResponse) => (
                         <div className="card">
-                            <img src="https://www.redacteur.com/blog/wp-content/uploads/2020/06/redacteur-blog-img-une-rediger-plaquette-immobiliere-740x522.jpg"/>
+                            <img src={`http://localhost:8080/downloadFile/${e.image}`} className="imgcss"/>
                             <div className="card-body">
                                 <h2>{
                                     e.name
@@ -43,7 +78,7 @@ const AnnoncesList = () => {
                                                 deleteAnnonce(e.id).then(() => fetchAnnonce())
                                             }
                                     }>delete</Button>
-                                    <Button className="button-update">update</Button>
+                                    <Button className="button-update" onClick={()=>history.push(`/createOrUpdate/${e.id}`)}>update</Button>
                                 </div>
                             </div>
                         </div>

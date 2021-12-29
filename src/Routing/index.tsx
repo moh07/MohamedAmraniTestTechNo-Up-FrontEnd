@@ -6,8 +6,10 @@ import {
     Switch,
     Router,
     withRouter,
-    MemoryRouter
+    MemoryRouter,
+    BrowserRouter
 } from "react-router-dom";
+import AnnonceDetails from '../pages/annonceDetails';
 
 export type PrivateRouteProps = any;
 
@@ -17,13 +19,15 @@ export const PrivateRoute = (props : PrivateRouteProps) => {
 };
 
 const Routes: React.FC = () => (
-    <MemoryRouter>
+    <BrowserRouter>
         <Switch>
             <PrivateRoute path={
-                    ['/annoces', '/']
+                    ['/annoces']
                 }
                 component={AnnoncesList}/>
+            <PrivateRoute path={['/createOrUpdate/:idOrCreate']}
+                component={AnnonceDetails}/>
         </Switch>
-    </MemoryRouter>
+    </BrowserRouter>
 )
 export default Routes

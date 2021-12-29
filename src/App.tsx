@@ -7,7 +7,8 @@ import Routes from './Routing/index';
 
 function App() {
     return (
-        <Routes/>);
+        <Routes/>
+        );
 }
 
 export default App;
